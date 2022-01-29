@@ -1,0 +1,21 @@
+service: scrap-notify
+
+provider:
+  lambdaHashingVersion: 20201221
+  name: aws
+  runtime: provided
+  region: eu-central-1
+  memorySize: 128
+  timeout: 30
+
+functions:
+  scrap-notify:
+    handler: bootstrap
+    package:
+      individually: true
+      exclude:
+        - '**/**'
+      include:
+        - ./bootstrap
+    events:
+        - schedule: cron(0 9 * * ? *)
