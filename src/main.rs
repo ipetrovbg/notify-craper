@@ -17,15 +17,20 @@ async fn main() -> Result<(), lambda_runtime::Error> {
     Ok(())
 }
 
-async fn handler(_: String, _: Context) -> Result<bool, lambda_runtime::Error> {
+async fn handler(
+    event_bridge: model::EventBridgeScheduledEvent,
+    _: Context,
+) -> Result<bool, lambda_runtime::Error> {
+    info!(target: "EventBridge", "Trigger time{}", event_bridge.time);
     match make_request() {
         Ok(html_string) => {
-            info!("{}", env::var("TOPIC_ARN")?);
+            let shared_config = aws_config::load_from_env().await;
+            info!(target: "SNS", "Topic arn{}", env::var("TOPIC_ARN")?);
+
             let product = model::ParseProduct::new(html_string)
                 .parse_header()
                 .parse_price();
 
-            let shared_config = aws_config::load_from_env().await;
             let client = Client::new(&shared_config);
             let topic_arn = env::var("TOPIC_ARN")?;
 
@@ -37,7 +42,7 @@ async fn handler(_: String, _: Context) -> Result<bool, lambda_runtime::Error> {
                 .await?;
         }
         Err(_) => {
-            error!("Couldn't make http request");
+            error!(target: "Reqwest error", "Couldn't make http request");
         }
     };
     Ok(true)

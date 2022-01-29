@@ -1,4 +1,6 @@
 use scraper::{Html, Selector};
+use serde::Deserialize;
+
 const EXPENSIVE_PRICE: i32 = 3999;
 
 pub struct ParseProduct {
@@ -64,4 +66,19 @@ impl ParseProduct {
             message,
         }
     }
+}
+
+#[derive(Deserialize)]
+pub struct EventBridgeScheduledEvent {
+    pub time: String, // {
+                      //     "version": "0",
+                      //     "id": "89d1a02d-5ec7-412e-82f5-13505f849b41",
+                      //     "detail-type": "Scheduled Event",
+                      //     "source": "aws.events",
+                      //     "account": "123456789012",
+                      //     "time": "2016-12-30T18:44:49Z",
+                      //     "region": "us-east-1",
+                      //     "resources": ["arn:aws:events:us-east-1:123456789012:rule/SampleRule"],
+                      //     "detail": {}
+                      // }
 }
