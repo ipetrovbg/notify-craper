@@ -1,10 +1,10 @@
 mod model;
 use aws_sdk_sns::Client;
+use dotenv::dotenv;
 use lambda_runtime::Context;
+use log::{debug, error, info};
 use std::env;
 use std::error::Error;
-use dotenv::dotenv;
-use log::{debug, error, info};
 
 const URL_TO_PARSE: &str = "https://magazin.photosynthesis.bg/bg/64336-fotoaparat-sony-a7-iii.html?search_query=A7+III&results=21";
 
@@ -32,16 +32,7 @@ async fn handler(_: String, _: Context) -> Result<bool, lambda_runtime::Error> {
             client
                 .publish()
                 .topic_arn(topic_arn)
-                .message(format!(
-                    "=============== Photosynthesis ===============\n\
-                    Requesting information for Sony A7 IIIn\n\
-                    Product: {}\n\
-                    Price: {}\n\
-                    {}
-                    ==============================================
-                    ",
-                    product.name, product.price, product.message
-                ))
+                .message(build_email_message(product))
                 .send()
                 .await?;
         }
@@ -50,6 +41,19 @@ async fn handler(_: String, _: Context) -> Result<bool, lambda_runtime::Error> {
         }
     };
     Ok(true)
+}
+
+fn build_email_message(product: model::ParseProduct) -> String {
+    format!(
+        "=============== Photosynthesis ===============\n\
+        Requesting information for Sony A7 IIIn\n\
+        Product: {}\n\
+        Price: {}\n\
+        {}\n\
+        ==============================================
+        ",
+        product.name, product.price, product.message
+    )
 }
 
 fn make_request() -> Result<String, Box<dyn Error>> {
