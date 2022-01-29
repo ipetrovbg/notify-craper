@@ -1435,6 +1435,7 @@ dependencies = [
  "aws-sdk-sns",
  "dotenv",
  "lambda_runtime",
+ "log",
  "reqwest",
  "scraper",
  "serde",
