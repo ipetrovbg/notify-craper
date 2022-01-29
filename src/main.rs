@@ -52,10 +52,6 @@ async fn handler(_: String, _: Context) -> Result<bool, lambda_runtime::Error> {
     Ok(true)
 }
 
-fn print(message: String) {
-    println!("> {}", message);
-}
-
 fn make_request() -> Result<String, Box<dyn Error>> {
     let client = reqwest::blocking::Client::builder().build()?;
     let response = client.get(URL_TO_PARSE).send()?;
