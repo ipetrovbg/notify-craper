@@ -1,11 +1,11 @@
 mod model;
+use aws_lambda_events::event::cloudwatch_events::CloudWatchEvent;
 use aws_sdk_sns::Client;
 use dotenv::dotenv;
 use lambda_runtime::Context;
 use log::{debug, error, info};
 use std::env;
 use std::error::Error;
-use aws_lambda_events::event::cloudwatch_events::CloudWatchEvent;
 
 const URL_TO_PARSE: &str = "https://magazin.photosynthesis.bg/bg/64336-fotoaparat-sony-a7-iii.html?search_query=A7+III&results=21";
 
@@ -18,10 +18,7 @@ async fn main() -> Result<(), lambda_runtime::Error> {
     Ok(())
 }
 
-async fn handler(
-    event_bridge: CloudWatchEvent,
-    _: Context,
-) -> Result<bool, lambda_runtime::Error> {
+async fn handler(event_bridge: CloudWatchEvent, _: Context) -> Result<bool, lambda_runtime::Error> {
     info!(target: "EventBridge", "Trigger time{}", event_bridge.time);
     match make_request() {
         Ok(html_string) => {
