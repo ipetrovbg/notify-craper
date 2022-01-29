@@ -50,9 +50,11 @@ fn build_email_message(product: model::ParseProduct) -> String {
         Product: {}\n\
         Price: {}\n\
         {}\n\
+        Product URL: {}\n\
+        \n\
         ==============================================
         ",
-        product.name, product.price, product.message
+        product.name, product.price, product.message, URL_TO_PARSE
     )
 }
 

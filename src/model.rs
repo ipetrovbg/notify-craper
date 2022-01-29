@@ -5,7 +5,7 @@ pub struct ParseProduct {
     pub price: i32,
     pub name: String,
     pub message: String,
-    html: Option<Html>
+    html: Option<Html>,
 }
 
 impl ParseProduct {
@@ -55,14 +55,13 @@ impl ParseProduct {
                 } else {
                     message = format!("Still too expensive 😕");
                 }
-
             }
         }
         ParseProduct {
             name: self.name,
             html: Some(html),
             price: product_price,
-            message
+            message,
         }
     }
 }
