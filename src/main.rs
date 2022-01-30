@@ -2,51 +2,67 @@ mod model;
 use aws_lambda_events::event::cloudwatch_events::CloudWatchEvent;
 use aws_sdk_sns::Client;
 use dotenv::dotenv;
-use lambda_runtime::Context;
-use log::{debug, error, info};
+use lambda_runtime::{handler_fn, Context};
 use std::env;
 use std::error::Error;
+use log::{debug, info, LevelFilter};
+use simple_logger::SimpleLogger;
+use crate::model::{ParseProduct, SimpleProductResponse};
 
 const URL_TO_PARSE: &str = "https://magazin.photosynthesis.bg/bg/64336-fotoaparat-sony-a7-iii.html?search_query=A7+III&results=21";
 
 #[tokio::main]
 async fn main() -> Result<(), lambda_runtime::Error> {
     dotenv().ok();
+    SimpleLogger::new().with_level(LevelFilter::Info).init().unwrap();
     debug!("Initializing lambda.");
-    let handler = lambda_runtime::handler_fn(handler);
-    lambda_runtime::run(handler).await?;
+
+    let handler_callback = handler_fn(handler);
+    lambda_runtime::run(handler_callback).await?;
     Ok(())
 }
 
-async fn handler(event_bridge: CloudWatchEvent, _: Context) -> Result<bool, lambda_runtime::Error> {
+async fn handler(
+    event_bridge: CloudWatchEvent,
+    _: Context,
+) -> Result<SimpleProductResponse, lambda_runtime::Error> {
     info!(target: "EventBridge", "Trigger time{}", event_bridge.time);
+
     match make_request() {
         Ok(html_string) => {
             let shared_config = aws_config::load_from_env().await;
             info!(target: "SNS", "Topic arn{}", env::var("TOPIC_ARN")?);
 
-            let product = model::ParseProduct::new(html_string)
+            let product = ParseProduct::new(html_string)
                 .parse_header()
                 .parse_price();
 
             let client = Client::new(&shared_config);
             let topic_arn = env::var("TOPIC_ARN")?;
+            let simple_product = SimpleProductResponse {
+                name: product.name.clone(),
+                price: product.price.clone(),
+                message: product.message.clone(),
+            };
+
+            info!("{} - {}", simple_product.name, simple_product.price);
 
             client
                 .publish()
                 .topic_arn(topic_arn)
-                .message(build_email_message(product))
+                .message(build_email_message(&product))
                 .send()
                 .await?;
+            Ok(simple_product)
         }
         Err(_) => {
-            error!(target: "Reqwest error", "Couldn't make http request");
+            log::error!(target: "Reqwest error", "Couldn't make http request");
+            Err("Reqwest lib couldn't make http request".into())
         }
-    };
-    Ok(true)
+    }
 }
 
-fn build_email_message(product: model::ParseProduct) -> String {
+fn build_email_message(product: &ParseProduct) -> String {
     format!(
         "=============== Photosynthesis ===============\n\
         Requesting information for Sony A7 IIIn\n\

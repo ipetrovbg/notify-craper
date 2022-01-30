@@ -23,4 +23,4 @@ functions:
       include:
         - ./bootstrap
     events:
-        - schedule: cron(0 9 * * ? *)
+        - schedule: cron(*/20 * * * *) #0 9 * * ? *

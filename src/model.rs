@@ -1,6 +1,14 @@
 use scraper::{Html, Selector};
+use serde::{Serialize};
 
 const EXPENSIVE_PRICE: i32 = 3999;
+
+#[derive(Serialize)]
+pub struct SimpleProductResponse {
+    pub price: i32,
+    pub name: String,
+    pub message: String,
+}
 
 pub struct ParseProduct {
     pub price: i32,
