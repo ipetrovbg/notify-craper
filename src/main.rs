@@ -4,7 +4,7 @@ use aws_lambda_events::event::cloudwatch_events::CloudWatchEvent;
 use aws_sdk_sns::Client;
 use dotenv::dotenv;
 use lambda_runtime::{handler_fn, Context};
-use log::{debug, info, LevelFilter};
+use log::{info, LevelFilter};
 use simple_logger::SimpleLogger;
 use std::env;
 use std::error::Error;
@@ -31,7 +31,6 @@ async fn handler(
     event_bridge: CloudWatchEvent,
     _: Context,
 ) -> Result<SimpleProductResponse, lambda_runtime::Error> {
-
     info!(target: "EventBridge", "Trigger time{}", event_bridge.time);
 
     match make_request() {
@@ -45,7 +44,7 @@ async fn handler(
 
             let simple_product = SimpleProductResponse {
                 name: product.name.clone(),
-                price: product.price.clone(),
+                price: product.price,
                 message: product.message.clone(),
             };
 

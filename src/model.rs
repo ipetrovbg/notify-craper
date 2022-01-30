@@ -55,12 +55,12 @@ impl ParseProduct {
         let price_meta_value = price_meta_el.value().attrs();
         let price_meta_vec = price_meta_value.collect::<Vec<_>>();
 
-        let product_price = 0;
+        let mut product_price = 0;
         let mut message = self.message;
 
         for price in price_meta_vec.iter() {
             if price.0.contains("content") {
-                let product_price = price.1.parse().unwrap_or(0);
+                product_price = price.1.parse().unwrap_or(0);
 
                 match product_price.cmp(&EXPENSIVE_PRICE) {
                     Ordering::Less => {
