@@ -1,5 +1,6 @@
 use scraper::{Html, Selector};
-use serde::{Serialize};
+use serde::Serialize;
+use std::cmp::Ordering;
 
 const EXPENSIVE_PRICE: i32 = 3999;
 
@@ -53,19 +54,28 @@ impl ParseProduct {
         let price_meta_el = price_el.select(&meta_selector).next().unwrap();
         let price_meta_value = price_meta_el.value().attrs();
         let price_meta_vec = price_meta_value.collect::<Vec<_>>();
-        let mut product_price = 0;
+
+        let product_price = 0;
         let mut message = self.message;
+
         for price in price_meta_vec.iter() {
             if price.0.contains("content") {
-                let price_int = price.1.parse().unwrap_or(0);
-                product_price = price_int;
-                if price_int < EXPENSIVE_PRICE {
-                    message = format!("Go and buy 🎉");
-                } else {
-                    message = format!("Still too expensive 😕");
+                let product_price = price.1.parse().unwrap_or(0);
+
+                match product_price.cmp(&EXPENSIVE_PRICE) {
+                    Ordering::Less => {
+                        message = format!("Go and buy 🎉📷");
+                    }
+                    Ordering::Equal => {
+                        message = format!("Nah! Still too expensive 😕");
+                    }
+                    Ordering::Greater => {
+                        message = format!("Oh, No! It's even more expensive 😩");
+                    }
                 }
             }
         }
+
         ParseProduct {
             name: self.name,
             html: Some(html),
