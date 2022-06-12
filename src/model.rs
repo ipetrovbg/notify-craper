@@ -1,6 +1,7 @@
+use std::cmp::Ordering;
+
 use scraper::{Html, Selector};
 use serde::Serialize;
-use std::cmp::Ordering;
 
 const EXPENSIVE_PRICE: i32 = 3999;
 

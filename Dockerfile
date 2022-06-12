@@ -7,7 +7,6 @@ RUN apt -y update
 RUN apt install -y musl-tools musl-dev
 RUN apt-get install -y build-essential
 RUN apt install -y gcc-x86-64-linux-gnu
-RUN apt-get install zip
 
 ADD ./ ./scrap-notify
 WORKDIR /scrap-notify
