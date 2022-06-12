@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Compile
-        uses: gmiam/rust-musl-action@master
+        uses: gmiam/rust-musl-action@v1.1.2
         with:
           args: cargo build --target $BUILD_TARGET --release
       - uses: actions/upload-artifact@v2
