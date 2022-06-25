@@ -48,7 +48,7 @@ jobs:
           path: target/release
 
       - name: Move binaries
-        run: mv target/${{ env.TARGET }}release/${{ env.BINARY_NAME }} bootstrap
+        run: mv target/${{ env.TARGET }}/release/${{ env.BINARY_NAME }} bootstrap
 
       - name: Serverless deploy
         uses: serverless/github-action@master
