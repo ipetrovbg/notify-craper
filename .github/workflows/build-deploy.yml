@@ -7,7 +7,6 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  BUILD_TARGET: x86_64-unknown-linux-musl
   BINARY_NAME: bootstrap
 
 
@@ -33,7 +32,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: scrapnotify-artifacts
-          path: target/${{ env.BUILD_TARGET }}/release/${{ env.BINARY_NAME }}
+          path: target/release/${{ env.BINARY_NAME }}
 
   deploy:
     name: Deploy
@@ -44,10 +43,10 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: scrapnotify-artifacts
-          path: target/${{ env.BUILD_TARGET }}/release
+          path: target/release
 
       - name: Move binaries
-        run: mv target/${{ env.BUILD_TARGET }}/release/${{ env.BINARY_NAME }} bootstrap
+        run: mv target/release/${{ env.BINARY_NAME }} bootstrap
 
       - name: Serverless deploy
         uses: serverless/github-action@master
