@@ -45,7 +45,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: scrapnotify-artifacts
-          path: target/release
+          path: target/${{ env.TARGET }}/release
 
       - name: Move binaries
         run: mv target/${{ env.TARGET }}/release/${{ env.BINARY_NAME }} bootstrap
