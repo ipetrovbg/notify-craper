@@ -26,7 +26,8 @@ jobs:
       - name: Build
         uses: actions-rs/cargo@v1
         with:
-          command: cargo build --target $BUILD_TARGET --release
+          command: build
+          args: --target $BUILD_TARGET --release
 #        with:
 #          args: cargo build --target $BUILD_TARGET --release
       - uses: actions/upload-artifact@v2
