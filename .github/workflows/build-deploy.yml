@@ -18,9 +18,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Compile
-        uses: juankaram/rust-musl-action@master
+        uses: actions-rs/toolchain@v1
         with:
-          args: cargo build --target $BUILD_TARGET --release
+          toolchain: nightly
+          override: true
+          components: rustfmt, clippy
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: cargo build --target $BUILD_TARGET --release
+#        with:
+#          args: cargo build --target $BUILD_TARGET --release
       - uses: actions/upload-artifact@v2
         with:
           name: scrapnotify-artifacts
