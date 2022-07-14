@@ -8,7 +8,6 @@ on:
 env:
   CARGO_TERM_COLOR: always
   BINARY_NAME: bootstrap
-  TARGET: x86_64-unknown-linux-musl
 
 
 jobs:
@@ -21,20 +20,18 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
-          target: ${{ env.TARGET }}
-          override: true
-          components: rustfmt, clippy
+          target: x86_64-unknown-linux-musl
+#          override: true
+#          components: rustfmt, clippy
       - name: Build
         uses: actions-rs/cargo@v1
         with:
           command: build
           args: --release
-#        with:
-#          args: cargo build --target $BUILD_TARGET --release
       - uses: actions/upload-artifact@v2
         with:
           name: scrapnotify-artifacts
-          path: target/${{ env.TARGET }}/release/${{ env.BINARY_NAME }}
+          path: target/x86_64-unknown-linux-musl/release
 
   deploy:
     name: Deploy
@@ -45,10 +42,10 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: scrapnotify-artifacts
-          path: target/${{ env.TARGET }}/release
+          path: target/x86_64-unknown-linux-musl/release
 
       - name: Move binaries
-        run: mv target/${{ env.TARGET }}/release/${{ env.BINARY_NAME }} bootstrap
+        run: mv target/x86_64-unknown-linux-musl/release/${{ env.BINARY_NAME }} bootstrap
 
       - name: Serverless deploy
         uses: serverless/github-action@master
