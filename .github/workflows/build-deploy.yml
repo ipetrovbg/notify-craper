@@ -26,8 +26,10 @@ jobs:
       - name: Add linux-musl target
         run: |
           rustup target add x86_64-unknown-linux-musl
-          sudo apt install musl-tools
-          sudo apt install pkg-config
+          sudo apt install musl-tools pkg-config libssl-dev openssl1.0 libssl1.0.0 libssl1.0-dev
+          cargo clean
+          OPENSSL_LIB_DIR="/usr/lib/x86_64-linux-gnu" 
+          OPENSSL_INCLUDE_DIR="/usr/include/openssl"
       - name: Build
         uses: actions-rs/cargo@v1
         with:
