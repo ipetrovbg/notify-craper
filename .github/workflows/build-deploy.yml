@@ -15,7 +15,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Rust x86_64-unknown-linux-musl
         uses: actions-rs/toolchain@v1
         with:
@@ -31,7 +31,7 @@ jobs:
       - name: Debug print
         run: ls -Rs
       - name: Move binaries
-        run: mv target/x86_64-unknown-linux-musl/release/${{ env.BINARY_NAME }} bootstrap
+        run: mv target/release/${{ env.BINARY_NAME }} bootstrap
       - name: Serverless deploy
         uses: serverless/github-action@v3.1
         with:
